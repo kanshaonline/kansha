@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kansha - Search Made Simple</title>
+    <!-- Importing Font Awesome for beautiful, crisp vector icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #070712;
+            --card-bg: #111124;
+            --text-main: #f0f4f8;
+            --text-muted: #8a99ad;
+            --flash-color: rgba(255, 255, 255, 0.15);
+        }
+
+        /* Category Specific Theme Configurations */
+        .news {
+            --card-accent: #00d2ff;
+            --card-accent-rgb: 0, 210, 255;
+        }
+        .entertainment {
+            --card-accent: #f43f5e;
+            --card-accent-rgb: 244, 63, 94;
+        }
+        .banking {
+            --card-accent: #10b981;
+            --card-accent-rgb: 16, 185, 129;
+        }
+        .social-media {
+            --card-accent: #8b5cf6;
+            --card-accent-rgb: 139, 92, 246;
+        }
+        .elearning {
+            --card-accent: #f97316;
+            --card-accent-rgb: 249, 115, 22;
+        }
+        .shopping {
+            --card-accent: #eab308;
+            --card-accent-rgb: 234, 179, 8;
+        }
+        .government {
+            --card-accent: #14b8a6;
+            --card-accent-rgb: 20, 184, 166;
+        }
+        .misc {
+            --card-accent: #64748b;
+            --card-accent-rgb: 100, 116, 139;
+        }
+        .travel {
+            --card-accent: #0284c7;
+            --card-accent-rgb: 2, 132, 199;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Screen Flash Overlay Effect */
+        .flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--flash-color) 0%, rgba(0,0,0,0) 70%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 0.4s ease-out;
+        }
+
+        .flash-active {
+            opacity: 1;
+            transition: opacity 0.05s ease-in;
+        }
+
+        /* Enhanced Hero Banner with Animated Gradient & Search */
+        header {
+            background: linear-gradient(-45deg, #400010, #7a0001, #4c0027, #130026);
+            background-size: 400% 400%;
+            animation: animateGradient 15s ease infinite;
+            padding: 50px 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            border-bottom: 2px solid rgba(255,255,255,0.1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @keyframes animateGradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-shadow: 0 4px 15px rgba(0,0,0,0.6);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        header h1 i {
+            color: #ffcccc;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        header p.subtitle {
+            font-size: 1.1rem;
+            color: #ffb3b3;
+            margin-bottom: 25px;
+            max-width: 600px;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.4);
+            font-weight: 300;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* Glassmorphic Search Bar CSS */
+        .search-container {
+            width: 100%;
+            max-width: 550px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .search-container i.search-icon {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.1rem;
+            pointer-events: none;
+            transition: color 0.3s ease;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #ffffff;
+            outline: none;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.65);
+        }
+
+        .search-input:focus {
+            background: rgba(255, 255, 255, 0.18);
+            border-color: #ff8080;
+            box-shadow: 0 8px 32px rgba(255, 128, 128, 0.25), inset 0 0 4px rgba(255,255,255,0.2);
+        }
+
+        .search-input:focus + i.search-icon {
+            color: #ff9999;
+        }
+
+        /* No Results Alert styling */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            display: none;
+        }
+
+        /* Dashboard Grid Layout */
+        .container {
+            max-width: 1400px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+            gap: 25px;
+            flex-grow: 1;
+        }
+
+        /* Category Card Component with Dynamic Variables */
+        .category-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), 
+                        box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
+                        border-color 0.3s ease,
+                        opacity 0.3s ease;
+        }
+
+        .category-card.hidden {
+            display: none;
+        }
+
+        .category-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--card-accent);
+            box-shadow: 0 15px 35px rgba(var(--card-accent-rgb), 0.25);
+        }
+
+        .card-header {
+            background: linear-gradient(90deg, #16162d, #1c1c38);
+            padding: 18px 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border-bottom: 2px solid var(--card-accent);
+            text-transform: uppercase;
+            color: #fff;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .card-header i {
+            margin-right: 12px;
+            font-size: 1.25rem;
+            color: var(--card-accent);
+            width: 24px;
+            text-align: center;
+            filter: drop-shadow(0 0 4px rgba(var(--card-accent-rgb), 0.5));
+        }
+
+        /* Indicator Line on Card Hover */
+        .category-card:hover .card-header::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--card-accent);
+            animation: pulse-glow 1.5s infinite alternate;
+        }
+
+        /* Navigation Links List */
+        .link-list {
+            list-style: none;
+            padding: 15px 0;
+        }
+
+        .link-list li {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+            transition: opacity 0.3s ease;
+        }
+
+        .link-list li.hidden {
+            display: none;
+        }
+
+        .link-list li:last-child {
+            border-bottom: none;
+        }
+
+        .link-list a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Link specific icons */
+        .link-list a i.link-icon {
+            margin-right: 12px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.25);
+            transition: all 0.25s ease;
+            width: 18px;
+            text-align: center;
+        }
+
+        /* Link Hover Slide and Transition */
+        .link-list a::before {
+            content: '→';
+            position: absolute;
+            left: -10px;
+            opacity: 0;
+            color: var(--card-accent);
+            transition: all 0.25s ease;
+        }
+
+        .link-list a:hover {
+            color: var(--text-main);
+            background-color: rgba(255, 255, 255, 0.02);
+            padding-left: 32px;
+        }
+
+        .link-list a:hover::before {
+            left: 15px;
+            opacity: 1;
+        }
+
+        .link-list a:hover i.link-icon {
+            color: var(--card-accent);
+            transform: scale(1.1);
+        }
+
+        /* Footer Sticky Navigation Contact */
+        footer {
+            background-color: #7a0001;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        footer p {
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        footer a {
+            color: #fff;
+            font-weight: bold;
+            text-decoration: none;
+            border-bottom: 1px dashed #fff;
+            transition: opacity 0.2s;
+        }
+
+        footer a:hover {
+            opacity: 0.8;
+        }
+
+        @keyframes pulse-glow {
+            from { opacity: 0.6; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .container {
+                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                margin: 20px auto;
+            }
+            header h1 {
+                font-size: 1.8rem;
+            }
+            header p.subtitle {
+                font-size: 0.95rem;
+            }
+            footer {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="flash-overlay" id="flashOverlay"></div>
+
+<TABLE WIDTH=100% BACKGROUND="Banner_BG.jpg" BORDER=0 CELLPADDING=0 CELLSPACING=0>
+	<TR>
+		<TD width="43%" background="images/Banner_BG.jpg" bgcolor="#960001">
+			<a href="https://kansha.webs.com"><IMG SRC="Kansha-Banner_01.jpg" ALT="" WIDTH=418 HEIGHT=50 border="0" ></a></TD>
+		<TD width="50%" bgcolor="#960001">   <input type="text" id="searchInput" class="search-input" placeholder="Search web links or categories..."></TD>
+
+		<TD width="7%" bgcolor="#960001">
+			<IMG SRC="Kansha-Banner_03.jpg" WIDTH=67 HEIGHT=50 ALT="" ALIGN="RIGHT" BORDER="0"></TD>
+	</TR>
+</TABLE>
+
+    <div class="container" id="cardsContainer">
+        <!-- NEWS -->
+        <div class="category-card news">
+            <div class="card-header"><i class="fa-solid fa-newspaper"></i>News</div>
+            <ul class="link-list">
+<li><a href="https://tamiljanam.com/" target="_blank"><i class="fa-solid fa-newspaper link-icon"></i>Tamil Janam</a></li>                
+<li><a href="http://www.dailythanthi.com/" target="_blank"><i class="fa-solid fa-newspaper link-icon"></i>Daily Thanthi</a></li>
+                <li><a href="http://www.puthiyathalaimurai.tv/" target="_blank"><i class="fa-solid fa-tv link-icon"></i>Puthiya Thalaimurai</a></li>
+                <li><a href="http://www.dinakaran.com/" target="_blank"><i class="fa-solid fa-paper-plane link-icon"></i>Dinakaran</a></li>
+                <li><a href="http://www.timesofindia.indiatimes.com/" target="_blank"><i class="fa-solid fa-globe link-icon"></i>Times Of India</a></li>
+                <li><a href="http://www.thehindu.com/" target="_blank"><i class="fa-solid fa-bookmark link-icon"></i>The Hindu</a></li>
+                                <li><a href="https://tamil.news18.com/" target="_blank"><i class="fa-solid fa-bolt link-icon"></i>News 18</a></li>
+                <li><a href="https://www.polimernews.com/dlive-tv" target="_blank"><i class="fa-solid fa-tower-broadcast link-icon"></i>Polimer News</a></li>
+                <li><a href="https://www.republicworld.com/livetv.html" target="_blank"><i class="fa-solid fa-video link-icon"></i>Republic TV</a></li>
+                <li><a href="https://www.wionews.com/" target="_blank"><i class="fa-solid fa-earth-americas link-icon"></i>WION News</a></li>
+            </ul>
+        </div>
+
+        <!-- ENTERTAINMENT -->
+        <div class="category-card entertainment">
+            <div class="card-header"><i class="fa-solid fa-share-square"></i>Social Media</div>
+            <ul class="link-list">
+
+ <li><a href="https://www.gmail.com/" target="_blank"><i class="fa-solid fa-envelope link-icon"></i>Gmail</a></li>
+<li><a href="https://mail.zoho.in/zm/" target="_blank"><i class="fa-solid fa-envelope link-icon"></i>Zoho</a></li>
+                
+<li><a href="https://youtube.com/" target="_blank"><i class="fa-brands fa-youtube link-icon"></i>YouTube</a></li>                
+
+
+
+
+                <li><a href="https://www.facebook.com/" target="_blank"><i class="fa-brands fa-facebook link-icon"></i>Facebook</a></li>
+                <li><a href="https://www.instagram.com/accounts/login/?hl=en" target="_blank"><i class="fa-brands fa-instagram link-icon"></i>Instagram</a></li>
+ <li><a href="https://web.whatsapp.com/" target="_blank"><i class="fa-brands fa-whatsapp link-icon"></i>WhatsApp</a></li>
+<li><a href="https://www.twitter.com/" target="_blank"><i class="fa-brands fa-twitter link-icon"></i>X</a></li>
+
+<li><a href="https://www.snapchat.com/" target="_blank"><i class="fa-brands fa-twitter link-icon"></i>Snapchat</a></li>
+
+
+            </ul>
+ 
+        </div>
+
+        <!-- BANKING -->
+        <div class="category-card banking">
+            <div class="card-header"><i class="fa-solid fa-landmark"></i>Banking</div>
+            <ul class="link-list">
+                <li><a href="https://www.icicibank.com/" target="_blank"><i class="fa-solid fa-credit-card link-icon"></i>ICICI Bank</a></li>
+                <li><a href="https://www.onlinesbi.com/" target="_blank"><i class="fa-solid fa-vault link-icon"></i>State Bank Of India</a></li>
+                <li><a href="https://www.hdfcbank.com/personal/default.htm" target="_blank"><i class="fa-solid fa-piggy-bank link-icon"></i>HDFC</a></li>
+                <li><a href="https://www.online.citibank.co.in/" target="_blank"><i class="fa-solid fa-money-check-dollar link-icon"></i>Citi Bank</a></li>
+                <li><a href="https://canarabank.com/" target="_blank"><i class="fa-solid fa-building-columns link-icon"></i>Canara Bank</a></li>
+                <li><a href="https://www.hdfc.com" target="_blank"><i class="fa-solid fa-house-chimney link-icon"></i>HDFC Home Loan</a></li>
+                <li><a href="https://www.sc.com/in/" target="_blank"><i class="fa-solid fa-chart-line link-icon"></i>Standard Chartered</a></li>
+                <li><a href="https://www.sbicard.com/" target="_blank"><i class="fa-regular fa-credit-card link-icon"></i>SBI Card</a></li>
+                <li><a href="https://www.indianbank.net.in/jsp/startIBPreview.jsp" target="_blank"><i class="fa-solid fa-money-bill-transfer link-icon"></i>Indian Bank</a></li>
+                <li><a href="https://www.unionbankofindia.co.in/english/home.aspx#" target="_blank"><i class="fa-solid fa-coins link-icon"></i>Union Bank</a></li>
+            </ul>
+        </div>
+
+  <!-- TRAVEL -->
+        <div class="category-card travel">
+            <div class="card-header"><i class="fa-solid fa-plane-departure"></i>Travel Booking</div>
+            <ul class="link-list">
+                <li><a href="https://www.irctc.co.in/nget/" target="_blank"><i class="fa-solid fa-train link-icon"></i>Train - IRCTC</a></li>
+                <li><a href="http://www.tnstc.in/" target="_blank"><i class="fa-solid fa-bus link-icon"></i>SETC</a></li>
+                <li><a href="http://www.redbus.in/" target="_blank"><i class="fa-solid fa-bus-simple link-icon"></i>RedBus</a></li>
+<li><a href="https://www.abhibus.com/" target="_blank"><i class="fa-solid fa-bus-simple link-icon"></i>Abhibus</a></li>
+
+
+                <li><a href="https://www.makemytrip.com/" target="_blank"><i class="fa-solid fa-ticket-simple link-icon"></i>Make My Trip</a></li>
+                <li><a href="https://www.agoda.com/en-in/?site_id=1922885&tag=6f147157-60b8-459f-af1a-9935d44970e9&gad_source=1&gad_campaignid=21035020746&device=c&network=g&adid=702597669000&rand=5174583829497405856&aud=kwd-2230651387&gclid=Cj0KCQjwoMXQBhDcARIsAH-eEttcAlIDYotrn4-qUCL1uudsbWPglR2LHkstk6mAEC5McT_H1PUmOPIaApjyEALw_wcB&checkIn=2025-10-26&checkOut=2025-10-27&adults=1&rooms=1&pslc=1&ds=vL7NAs%2FuvnyeIqsy" target="_blank"><i class="fa-solid fa-caravan link-icon"></i>Agoda</a></li>
+                <li><a href="https://www.skyscanner.co.in/?locale=en-GB&gclsrc=aw.ds&&utm_source=google&utm_medium=cpc&utm_campaign=IN-Travel-Search-Brand-SkyscannerPure-Desktop&utm_term=skyscanner&associateID=SEM_FLI_19465_00000&campaign_id=21456707965&adgroupid=167310367911&keyword_id=kwd-400074527&gad_source=1&gad_campaignid=21456707965&gclid=Cj0KCQjwoMXQBhDcARIsAH-eEtuunj6EoP64KWUgBk0FUVyl3hbvN91BarnBjdqVM0Pe29cwLyAI6jkaAltlEALw_wcB" target="_blank"><i class="fa-regular fa-circle-user link-icon"></i>Skyscanner</a></li>
+
+
+
+   <li><a href="https://www.confirmtkt.com/" target="_blank"><i class="fa-regular fa-circle-user link-icon"></i>Confirm Ticket</a></li>
+
+                <li><a href="http://www.indianrail.gov.in/enquiry/PnrEnquiry.html" target="_blank"><i class="fa-solid fa-clipboard-question link-icon"></i>PNR Status</a></li>
+            </ul>
+        </div>
+
+
+       
+
+
+        <!-- ONLINE SHOPPING -->
+        <div class="category-card shopping">
+            <div class="card-header"><i class="fa-solid fa-cart-shopping"></i>Online Shopping</div>
+            <ul class="link-list">
+               
+ <li><a href="https://www.amazon.in" target="_blank"><i class="fa-brands fa-amazon link-icon"></i>Amazon</a></li>
+<li><a href="https://www.bigbasket.com/" target="_blank"><i class="fa fa-cart-arrow-down link-icon"></i>Bigbasket</a></li>
+<li><a href="https://blinkit.com/" target="_blank"><i class="fa-brands fa-shopping-basket link-icon"></i>BlinkIt</a></li>
+
+   <li><a href="https://www.flipkart.com" target="_blank"><i class="fa-solid fa-bag-shopping link-icon"></i>Flipkart</a></li>
+
+              
+               
+                <li><a href="https://www.tatacliq.com/" target="_blank"><i class="fa-solid fa-store link-icon"></i>Tata Cliq</a></li>
+                <li><a href="https://meesho.com/" target="_blank"><i class="fa-solid fa-tags link-icon"></i>Meesho</a></li>
+                <li><a href="https://www.snapdeal.com/" target="_blank"><i class="fa-solid fa-basket-shopping link-icon"></i>Snapdeal</a></li>
+                <li><a href="https://www.myntra.com/" target="_blank"><i class="fa-solid fa-shirt link-icon"></i>Myntra</a></li>
+ <li><a href="https://www.airtel.in/" target="_blank"><i class="fa-solid fa-mobile-screen link-icon"></i>AirTel</a></li>
+                <li><a href="https://shop.vodafone.in/shop/prepaid/easy-online-recharge.jsp" target="_blank"><i class="fa-solid fa-sim-card link-icon"></i>Vodafone</a></li>
+                <li><a href="http://portal2.bsnl.in/myportal/quickrecharge.do" target="_blank"><i class="fa-solid fa-phone-volume link-icon"></i>BSNL</a></li>
+             
+            </ul>
+        </div>
+
+        <!-- UTILITIES & SERVICES -->
+        <div class="category-card government">
+            <div class="card-header"><i class="fa-solid fa-gavel"></i>Govt. Services</div>
+            <ul class="link-list">
+ <li><a href="http://www.chennaicorporation.gov.in" target="_blank"><i class="fa-solid fa-city link-icon"></i>Chennai Corporation</a></li>
+    <li><a href="https://www.tnebnet.org/awp/login?locale=ta" target="_blank"><i class="fa fa-bolt link-icon"></i>TNEB</a></li>
+ <li><a href="https://www.tnpds.gov.in" target="_blank"><i class="fa-solid fa-wheat-awn link-icon"></i>Ration TNPDS</a></li>
+<li><a href="https://www.india.gov.in/" target="_blank"><i class="fa-solid fa-fire-burner link-icon"></i>India Gov</a></li>
+<li><a href="https://www.digilocker.gov.in/" target="_blank"><i class="fa-solid fa-briefcase link-icon"></i>DigiLocker</a></li>
+
+         <li><a href="https://my.ebharatgas.com/BookCylinder/Index" target="_blank"><i class="fa-solid fa-fire-burner link-icon"></i>Bharat Gas</a></li>
+                <li><a href="https://www.incometax.gov.in/iec/foportal" target="_blank"><i class="fa-solid fa-receipt link-icon"></i>Income Tax</a></li>
+                <li><a href="http://www.elections.tn.gov.in/" target="_blank"><i class="fa-solid fa-check-to-slot link-icon"></i>TN Election Commission</a></li>
+
+<li><a href="https://unifiedportal-mem.epfindia.gov.in/memberinterface/" target="_blank"><i class="fa-solid fa-usd link-icon"></i>Provident Fund Log In</a></li>
+
+
+               
+            </ul>
+        </div>
+<!-- SOCIAL MEDIA -->
+        <div class="category-card social-media">
+            <div class="card-header"><i class="fa-solid fa-film"></i>Entertainment</div>
+            <ul class="link-list">
+
+
+
+ <li><a href="https://www.tamilradios.com/" target="_blank"><i class="fa-solid fa-music link-icon"></i>Tamil FM Radios</a></li>
+               
+
+
+
+ <li><a href="https://www.skillsoft.com/login-skillsoft" target="_blank"><i class="fa-solid fa-book link-icon"></i>Skillsoft</a></li>
+               <li><a href="https://www.moviesda.talk/" target="_blank"><i class="fa-solid fa-clapperboard link-icon"></i>Tamil Movies Download</a></li>
+<li><a href="https://www.masstamilan.dev/" target="_blank"><i class="fa-solid fa-music link-icon"></i>Tamil MP3 Songs</a></li>
+                                <li><a href="https://en.savefrom.net/" target="_blank"><i class="fa-solid fa-download link-icon"></i>Save YT Videos Offline</a></li>
+                              <li><a href="http://www.ticketnew.com/" target="_blank"><i class="fa-solid fa-mask link-icon"></i>Ticket New</a></li>
+                <li><a href="https://in.bookmyshow.com/" target="_blank"><i class="fa-solid fa-clapperboard link-icon"></i>Book My Show</a></li>
+ 
+            </ul>
+        </div>
+        
+
+        <!-- MISCELLANEOUS -->
+        <div class="category-card misc">
+            <div class="card-header"><i class="fa-solid fa-cubes"></i>General Resources</div>
+            <ul class="link-list">
+               
+                              <li><a href="https://www.google.co.in/maps/" target="_blank"><i class="fa-solid fa-map-location-dot link-icon"></i>Google Maps</a></li>
+
+<li><a href="https://gemini.google.com/app?hl=en-IN" target="_blank"><i class="fa-solid fa-star link-icon"></i>Gemini</a></li>
+
+
+<li><a href="https://chatgpt.com/" target="_blank"><i class="fa-solid fa-snowflake link-icon"></i>Chat GPT</a></li>
+
+
+
+            </ul>
+        </div>
+ 
+
+        <!-- No Results placeholder -->
+        <div id="noResults" class="no-results">
+            <i class="fa-solid fa-magnifying-glass-blur" style="font-size: 2.5rem; margin-bottom: 15px; display: block; color: var(--accent-red);"></i>
+            No links or categories matching your search were found.
+        </div>
+    </div>
+
+    <footer>
+        <p><i class="fa-solid fa-comment-dots"></i>Your suggestions to improve this site are welcome.</p>
+        <p><i class="fa-solid fa-envelope"></i>Contact us at: <a href="mailto:kanshaonline@gmail.com">kanshaonline@gmail.com</a></p>
+    </footer>
+
+    <script>
+        // Ambient Flash Highlights
+        const overlay = document.getElementById('flashOverlay');
+        const cards = document.querySelectorAll('.category-card');
+
+        cards.forEach(card => {
+            const cardAccentColor = getComputedStyle(card).getPropertyValue('--card-accent').trim();
+            const links = card.querySelectorAll('.link-list a');
+            
+            links.forEach(link => {
+                link.addEventListener('click', () => {
+                    overlay.style.setProperty('--flash-color', `radial-gradient(circle, ${cardAccentColor} 0%, rgba(0,0,0,0) 70%)`);
+                    overlay.classList.add('flash-active');
+                    setTimeout(() => {
+                        overlay.classList.remove('flash-active');
+                    }, 120);
+                });
+            });
+        });
+
+        // Instant Real-Time Search Engine
+        const searchInput = document.getElementById('searchInput');
+        const noResults = document.getElementById('noResults');
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase().trim();
+            let totalMatchCount = 0;
+
+            cards.forEach(card => {
+                const cardHeader = card.querySelector('.card-header').textContent.toLowerCase();
+                const links = card.querySelectorAll('.link-list li');
+                let cardHasMatch = false;
+
+                // Check header match
+                const isHeaderMatch = cardHeader.includes(query);
+
+                links.forEach(li => {
+                    const linkText = li.querySelector('a').textContent.toLowerCase();
+                    if (isHeaderMatch || linkText.includes(query)) {
+                        li.classList.remove('hidden');
+                        cardHasMatch = true;
+                        totalMatchCount++;
+                    } else {
+                        li.classList.add('hidden');
+                    }
+                });
+
+                if (cardHasMatch) {
+                    card.classList.remove('hidden');
+                } else {
+                    card.classList.add('hidden');
+                }
+            });
+
+            // Display "No Results" element if nothing matches
+            if (totalMatchCount === 0 && query !== '') {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
