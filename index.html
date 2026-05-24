@@ -646,6 +646,96 @@
 
 <li><a href="https://claude.ai/new" target="_blank"><i class="fa-solid fa-asterisk link-icon"></i>Claude</a></li>
 
+
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+
+ <!-- Tamil Radio Player -->
+      <center><h2>Live Tamil Radio</h2></center>
+
+<center>
+    <input type="text" id="searchBar" placeholder="Search for a station..." style="width: 250px; padding: 6px; margin-bottom: 10px; border-radius: 4px; border: 1px solid #ccc;">
+    <br>
+    <select id="stationList" style="width: 265px; padding: 6px;"></select>
+</center>
+
+<br><br>
+
+<center>
+    <audio id="radioPlayer" controls autoplay></audio>
+</center>
+
+<script>
+    const stationList = document.getElementById('stationList');
+    const radioPlayer = document.getElementById('radioPlayer');
+    const searchBar = document.getElementById('searchBar');
+    
+    // Store all retrieved stations globally for filtering
+    let allStations = [];
+
+    // Fetch Tamil radio stations from Radio Browser API
+    fetch("https://de1.api.radio-browser.info/json/stations/bylanguage/tamil")
+        .then(response => response.json())
+        .then(stations => {
+            // Filter out any entries missing a valid stream URL or name
+            allStations = stations.filter(station => station.name && station.url_resolved);
+            
+            // Initially populate the list with all stations
+            populateStationList(allStations);
+
+            // Auto-play the first station if available
+            if (allStations.length > 0) {
+                radioPlayer.src = allStations[0].url_resolved;
+            }
+        })
+        .catch(err => {
+            console.error("Error fetching stations:", err);
+            alert("Unable to load Tamil radio stations.");
+        });
+
+    // Function to populate the dropdown list
+    function populateStationList(stationsToDisplay) {
+        // Clear previous options
+        stationList.innerHTML = '';
+
+        if (stationsToDisplay.length === 0) {
+            const noMatchOption = document.createElement('option');
+            noMatchOption.textContent = "No stations found";
+            noMatchOption.disabled = true;
+            stationList.appendChild(noMatchOption);
+            return;
+        }
+
+        stationsToDisplay.forEach(station => {
+            const option = document.createElement('option');
+            option.value = station.url_resolved;
+            option.textContent = station.name;
+            stationList.appendChild(option);
+        });
+    }
+
+    // Filter stations dynamically based on user input
+    searchBar.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        
+        const filteredStations = allStations.filter(station => 
+            station.name.toLowerCase().includes(searchTerm)
+        );
+
+        populateStationList(filteredStations);
+    });
+
+    // Change station when user selects a new one from the dropdown
+    stationList.addEventListener('change', () => {
+        if (stationList.value) {
+            radioPlayer.src = stationList.value;
+            radioPlayer.play().catch(err => console.error("Playback error:", err));
+        }
+    });
+</script>
+
+				
+
             </ul>
         </div>
  
