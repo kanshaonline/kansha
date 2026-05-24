@@ -650,9 +650,54 @@
 <p>&nbsp;</p>
 <p>&nbsp;</p>
 
- <!-- Tamil Radio Player -->
-      <center><h2>Live Tamil Radio</h2></center>
+  
+ <!-- Import Google Fonts (Pinyon Script) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
 
+<style>
+    /* Elegant container styled for a formal calligraphic script */
+    .pinyon-header-container {
+        display: inline-block;
+        font-family: 'Pinyon Script', cursive;
+        font-size: 2.5rem; /* Calligraphic scripts look best at larger scales */
+        color: #276db3;
+        margin: 15px auto;
+        position: relative;
+        letter-spacing: 1px;
+    }
+
+    /* Subtle flourish line under the title to complement the script */
+    .pinyon-header-container::after {
+        content: '';
+        display: block;
+        width: 60%;
+        height: 1px;
+        background: linear-gradient(to right, transparent, #7f8c8d, transparent);
+        margin: -5px auto 0 auto;
+    }
+
+    /* Elegant, subtle musical note accent styling */
+    .music-note {
+        font-family: initial; /* Prevents the script from distorting the unicode symbols */
+        font-size: 2rem;
+        vertical-align: middle;
+        color: #7f8c8d;
+        margin: 0 15px;
+        opacity: 0.8;
+    }
+</style>
+
+<center>
+    <div class="pinyon-header-container">
+        <span class="music-note">♪</span>
+        Songs Machi
+        <span class="music-note">♪</span>
+    </div>
+</center>
+
+<!-- Search Input Field -->
 <center>
     <input type="text" id="searchBar" placeholder="Search for a station..." style="width: 250px; padding: 6px; margin-bottom: 10px; border-radius: 4px; border: 1px solid #ccc;">
     <br>
@@ -670,20 +715,15 @@
     const radioPlayer = document.getElementById('radioPlayer');
     const searchBar = document.getElementById('searchBar');
     
-    // Store all retrieved stations globally for filtering
     let allStations = [];
 
     // Fetch Tamil radio stations from Radio Browser API
     fetch("https://de1.api.radio-browser.info/json/stations/bylanguage/tamil")
         .then(response => response.json())
         .then(stations => {
-            // Filter out any entries missing a valid stream URL or name
             allStations = stations.filter(station => station.name && station.url_resolved);
-            
-            // Initially populate the list with all stations
             populateStationList(allStations);
 
-            // Auto-play the first station if available
             if (allStations.length > 0) {
                 radioPlayer.src = allStations[0].url_resolved;
             }
@@ -693,9 +733,7 @@
             alert("Unable to load Tamil radio stations.");
         });
 
-    // Function to populate the dropdown list
     function populateStationList(stationsToDisplay) {
-        // Clear previous options
         stationList.innerHTML = '';
 
         if (stationsToDisplay.length === 0) {
@@ -714,18 +752,14 @@
         });
     }
 
-    // Filter stations dynamically based on user input
     searchBar.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
-        
         const filteredStations = allStations.filter(station => 
             station.name.toLowerCase().includes(searchTerm)
         );
-
         populateStationList(filteredStations);
     });
 
-    // Change station when user selects a new one from the dropdown
     stationList.addEventListener('change', () => {
         if (stationList.value) {
             radioPlayer.src = stationList.value;
