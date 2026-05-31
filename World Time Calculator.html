@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><font color = "white">World Time Calculator</font></title>
+    <style>
+        :root {
+            --bg-color: #01110c;
+            --card-bg: #011013;
+            --text-color: #dbd6d6;
+            --primary-color: #4a90e2;
+            --border-color: #dddddd;
+        }
+
+        /* Basic container styling */
+        .time-calculator-box {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            max-width: 450px;
+            margin: 20px auto;
+            padding: 25px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(218, 216, 216, 0.1);
+            color: var(--text-color);
+            box-sizing: border-box;
+        }
+
+        .time-calculator-box h2 {
+            margin-top: 0;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #f5f3f3;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #fafafa;
+            box-sizing: border-box;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #fff;
+        }
+
+        /* Results section styling */
+        .results-container {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 2px dashed var(--border-color);
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .result-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .result-label {
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .result-value {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #f5f3f3;
+        }
+
+        .highlight-time {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="time-calculator-box">
+    <h2>🌐 World Time Calculator</h2>
+    
+    <div class="form-group">
+        <label id="local-label" for="base-time">Your Local Time:</label>
+        <input type="datetime-local" id="base-time">
+    </div>
+
+    <div class="form-group">
+        <label for="target-timezone">Convert To Time Zone:</label>
+        <select id="target-timezone">
+            <option value="America/New_York">US Eastern Time (New York)</option>
+            <option value="America/Chicago">US Central Time (Chicago)</option>
+            <option value="America/Denver">US Mountain Time (Denver)</option>
+            <option value="America/Los_Angeles">US Pacific Time (Los Angeles)</option>
+            <option value="America/Anchorage">Alaska Time</option>
+            <option value="Pacific/Honolulu">Hawaii Time</option>
+            <option value="Europe/London">Western European / GMT (London)</option>
+            <option value="Europe/Paris">Central European Time (Paris, Berlin, Rome)</option>
+            <option value="Europe/Moscow">Moscow Time</option>
+            <option value="Asia/Dubai">Gulf Standard Time (Dubai)</option>
+            <option value="Asia/Kolkata">India Standard Time (Mumbai, New Delhi)</option>
+            <option value="Asia/Singapore">Singapore / China Standard Time</option>
+            <option value="Asia/Tokyo">Japan Standard Time (Tokyo)</option>
+            <option value="Australia/Sydney">Eastern Australia Time (Sydney)</option>
+            <option value="UTC">Coordinated Universal Time (UTC/GMT)</option>
+        </select>
+    </div>
+
+    <div class="results-container">
+        <div class="result-row">
+            <span class="result-label">Target Local Time:</span>
+            <span class="result-value highlight-time" id="target-time-output">--:--</span>
+        </div>
+        <div class="result-row">
+            <span class="result-label">Target Date:</span>
+            <span class="result-value" id="target-date-output">--</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const baseTimeInput = document.getElementById("base-time");
+        const targetZoneSelect = document.getElementById("target-timezone");
+        const targetTimeOutput = document.getElementById("target-time-output");
+        const targetDateOutput = document.getElementById("target-date-output");
+        const localLabel = document.getElementById("local-label");
+
+        // 1. Automatically detect the user's local timezone & label it
+        const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        localLabel.textContent = `Your Time (${userTimeZone}):`;
+
+        // 2. Initialize input fields with the exact current local date and time
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        
+        baseTimeInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+        // 3. Core Calculation Function
+        function calculateWorldTime() {
+            if (!baseTimeInput.value) return;
+
+            // Gather the user entered time
+            const chosenDateTime = new Date(baseTimeInput.value);
+            const targetTimeZone = targetZoneSelect.value;
+
+            try {
+                // Format time based on user choice using modern Intl API
+                const timeOptions = {
+                    timeZone: targetTimeZone,
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                };
+                
+                const dateOptions = {
+                    timeZone: targetTimeZone,
+                    weekday: 'short',
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric'
+                };
+
+                // Update UI elements
+                targetTimeOutput.textContent = new Intl.DateTimeFormat('en-US', timeOptions).format(chosenDateTime);
+                targetDateOutput.textContent = new Intl.DateTimeFormat('en-US', dateOptions).format(chosenDateTime);
+            } catch (error) {
+                console.error("Error calculating timezone offset:", error);
+            }
+        }
+
+        // 4. Attach event listeners to update calculations instantly upon interaction
+        baseTimeInput.addEventListener("input", calculateWorldTime);
+        targetZoneSelect.addEventListener("change", calculateWorldTime);
+
+        // Run initial calculation right out of the gate
+        calculateWorldTime();
+    });
+</script>
+
+</body>
+</html>
