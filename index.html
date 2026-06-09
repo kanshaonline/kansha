@@ -657,13 +657,21 @@
 </li>
 
 
-<li><a href="#" onClick="MyWindow=window.open('Radio.html','MyWindow','width=600,height=400,statusbar=0,locationbar=0,toolbar=0'); return false;"><i class="fa-solid fa-radio link-icon"></i>
-      Tamil Radio
-    </a></li>
+
+ <li>
+  <a href="#" onclick="MyWindow=window.open(
+    'Radio.html',
+    'MyWindow',
+    'width=600,height=400,menubar=0,toolbar=0,location=0,status=0,scrollbars=0,resizable=0'
+  ); return false;">
+    <i class="fa-solid fa-radio link-icon"></i>
+    Tamil Radio
+  </a>
+</li>
+
 
             </ul>
         </div>
-
  
 
         <!-- No Results placeholder -->
@@ -678,67 +686,6 @@
         <p><i class="fa-solid fa-envelope"></i>Contact us at: <a href="mailto:kanshaonline@gmail.com">kanshaonline@gmail.com</a></p>
     </footer>
 
-    <script>
-        // Ambient Flash Highlights
-        const overlay = document.getElementById('flashOverlay');
-        const cards = document.querySelectorAll('.category-card');
-
-        cards.forEach(card => {
-            const cardAccentColor = getComputedStyle(card).getPropertyValue('--card-accent').trim();
-            const links = card.querySelectorAll('.link-list a');
-            
-            links.forEach(link => {
-                link.addEventListener('click', () => {
-                    overlay.style.setProperty('--flash-color', `radial-gradient(circle, ${cardAccentColor} 0%, rgba(0,0,0,0) 70%)`);
-                    overlay.classList.add('flash-active');
-                    setTimeout(() => {
-                        overlay.classList.remove('flash-active');
-                    }, 120);
-                });
-            });
-        });
-
-        // Instant Real-Time Search Engine
-        const searchInput = document.getElementById('searchInput');
-        const noResults = document.getElementById('noResults');
-
-        searchInput.addEventListener('input', () => {
-            const query = searchInput.value.toLowerCase().trim();
-            let totalMatchCount = 0;
-
-            cards.forEach(card => {
-                const cardHeader = card.querySelector('.card-header').textContent.toLowerCase();
-                const links = card.querySelectorAll('.link-list li');
-                let cardHasMatch = false;
-
-                // Check header match
-                const isHeaderMatch = cardHeader.includes(query);
-
-                links.forEach(li => {
-                    const linkText = li.querySelector('a').textContent.toLowerCase();
-                    if (isHeaderMatch || linkText.includes(query)) {
-                        li.classList.remove('hidden');
-                        cardHasMatch = true;
-                        totalMatchCount++;
-                    } else {
-                        li.classList.add('hidden');
-                    }
-                });
-
-                if (cardHasMatch) {
-                    card.classList.remove('hidden');
-                } else {
-                    card.classList.add('hidden');
-                }
-            });
-
-            // Display "No Results" element if nothing matches
-            if (totalMatchCount === 0 && query !== '') {
-                noResults.style.display = 'block';
-            } else {
-                noResults.style.display = 'none';
-            }
-        });
-    </script>
+    
 </body>
 </html>
