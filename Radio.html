@@ -1,0 +1,227 @@
+<html>
+    
+        <title>Kansha Radio - Tamil Stations</title>
+<body>
+
+   <style>
+        /* Modern full-page background with a radio image */
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Using a high-quality, dark radio background from Unsplash */
+            background: url('RadioBG.JPG') no-repeat center center fixed;
+            background-size: cover;
+            font-family: sans-serif;
+        }
+        
+        /* The simulated physical Radio Interface Container */
+        .radio-chassis {
+            width: 350px;
+            color: #fff;
+            text-align: center;
+                        padding: 25px;
+            
+        }
+
+        .radio-display {
+            
+            border: 2px solid #522a06;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 20px;
+            
+        }
+
+        #searchBar {
+            width: 90%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: none;
+            background: #222;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        #stationList {
+            width: 97%;
+            padding: 8px;
+            border-radius: 4px;
+            border: none;
+            background: #333;
+            color: #55ff55; /* Vintage green text */
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        
+        /* Tactile physical buttons grid */
+        .button-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .radio-btn {
+            background: linear-gradient(135deg, #555, #222);
+            border: 1px solid #111;
+            border-radius: 6px;
+            color: white;
+            padding: 12px 5px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 3px #111;
+            transition: all 0.1s ease;
+            font-size: 14px;
+        }
+
+        .radio-btn:active {
+            box-shadow: 0 1px #111;
+            transform: translateY(2px);
+        }
+
+        /* Play button modifications: Vibrant neon green aesthetic when playing */
+        .radio-btn.playing {
+           background: linear-gradient(135deg, #fc0505, #550600);
+            border-color: #330000;
+            color: #fff;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.6);
+            box-shadow: 0 3px #212200, 0 0 10px rgba(0, 204, 27, 0.4);
+        }
+
+        /* Invisible audio node since we use physical buttons */
+        audio {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="radio-chassis">
+    <div class="radio-display">
+        <input type="text" id="searchBar" placeholder="🔍 Search Station...">
+        <select id="stationList"></select>
+    </div>
+
+    <div class="button-pad">
+        <button class="radio-btn" id="btnPrev">⏮ PREV</button>
+        <button class="radio-btn" id="btnPlayPause">▶ PLAY</button>
+        <button class="radio-btn" id="btnNext">⏭ NEXT</button>
+    </div>
+</div>
+
+<audio id="radioPlayer" autoplay></audio>
+
+<script>
+    const stationList = document.getElementById('stationList');
+    const radioPlayer = document.getElementById('radioPlayer');
+    const searchBar = document.getElementById('searchBar');
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    
+    let allStations = [];
+
+    // Fetch Tamil radio stations
+    fetch("https://de1.api.radio-browser.info/json/stations/bylanguage/tamil")
+        .then(response => response.json())
+        .then(stations => {
+            allStations = stations.filter(station => station.name && station.url_resolved);
+            populateStationList(allStations);
+
+            if (allStations.length > 0) {
+                changeStation(0);
+            }
+        })
+        .catch(err => {
+            console.error("Error fetching stations:", err);
+        });
+
+    function populateStationList(stationsToDisplay) {
+        stationList.innerHTML = '';
+
+        if (stationsToDisplay.length === 0) {
+            const noMatchOption = document.createElement('option');
+            noMatchOption.textContent = "No stations found";
+            noMatchOption.disabled = true;
+            stationList.appendChild(noMatchOption);
+            return;
+        }
+
+        stationsToDisplay.forEach((station, index) => {
+            const option = document.createElement('option');
+            option.value = station.url_resolved;
+            option.dataset.index = index;
+            option.textContent = station.name;
+            stationList.appendChild(option);
+        });
+    }
+
+    function changeStation(index) {
+        if (stationList.options[index]) {
+            stationList.selectedIndex = index;
+            radioPlayer.src = stationList.options[index].value;
+            playRadio();
+        }
+    }
+
+    function playRadio() {
+        radioPlayer.play()
+            .then(() => {
+                btnPlayPause.textContent = "⏸ PAUSE";
+                btnPlayPause.classList.add('playing');
+            })
+            .catch(err => console.error("Playback interrupted:", err));
+    }
+
+    function togglePlay() {
+        if (radioPlayer.paused) {
+            playRadio();
+        } else {
+            radioPlayer.pause();
+            btnPlayPause.textContent = "▶ PLAY";
+            btnPlayPause.classList.remove('playing');
+        }
+    }
+
+    // Interactive Button Mapping
+    btnPlayPause.addEventListener('click', togglePlay);
+
+    btnNext.addEventListener('click', () => {
+        let nextIndex = stationList.selectedIndex + 1;
+        if (nextIndex >= stationList.options.length) nextIndex = 0;
+        changeStation(nextIndex);
+    });
+
+    btnPrev.addEventListener('click', () => {
+        let prevIndex = stationList.selectedIndex - 1;
+        if (prevIndex < 0) prevIndex = stationList.options.length - 1;
+        changeStation(prevIndex);
+    });
+
+    searchBar.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const filteredStations = allStations.filter(station => 
+            station.name.toLowerCase().includes(searchTerm)
+        );
+        populateStationList(filteredStations);
+        if (filteredStations.length > 0) changeStation(0);
+    });
+
+    stationList.addEventListener('change', () => {
+        radioPlayer.src = stationList.value;
+        playRadio();
+    });
+</script>
+
+
+
+            </ul>
+        </div>
+</body>
+</html>
