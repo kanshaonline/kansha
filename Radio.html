@@ -1,3 +1,4 @@
+
 <html>
     
         <title>Kansha Radio - Tamil Stations</title>
@@ -125,22 +126,30 @@
     const btnPrev = document.getElementById('btnPrev');
     const btnNext = document.getElementById('btnNext');
     
-    let allStations = [];
+    let allStations = [
+        { name: "BIG FM", url_resolved: "https://stream.zeno.fm/r2gn1pgm4qruv" },
 
-    // Fetch Tamil radio stations
-    fetch("https://de1.api.radio-browser.info/json/stations/bylanguage/tamil")
-        .then(response => response.json())
-        .then(stations => {
-            allStations = stations.filter(station => station.name && station.url_resolved);
-            populateStationList(allStations);
+ { name: "80s Songs", url_resolved: "https://stream.zeno.fm/48w230kx8vzuv.aac" },
+ { name: "90s Songs", url_resolved: "https://stream.zeno.fm/tqnws2eafwzuv.aac" },
+ { name: "Chillax", url_resolved: "http://stream.zeno.fm/ohhsihm2byluv" },
+ { name: "Harris Jayaraj", url_resolved: "http://stream.zeno.fm/ob6tjg8gulptv" },
+ { name: "Ilayaraja Super Beat", url_resolved: "https://psrlive2.listenon.in/irbeat?ah=0e81749e37789e5fb8c290926ce87e3f" },
+ { name: "Ilayaraja Hitz", url_resolved: "https://psrlive2.listenon.in/ir?ah=0e81749e37789e5fb8c290926ce87e3f" },
+ { name: "Ilayaraja Lite", url_resolved: "https://psrlive2.listenon.in/irlite?ah=0e81749e37789e5fb8c290926ce87e3f" },
+ { name: "Mohan Hitz", url_resolved: "https://psrlive4.listenon.in/mohan?station=mohanradio" },
+ { name: "MS Viswanathan", url_resolved: "http://stream.zeno.fm/x7wc1xgllvsvv" },
+ { name: "Janaki Hits", url_resolved: "https://psrlive2.listenon.in/janaki?station=janakiradio" },
+ { name: "Yuvan Shankar Raja", url_resolved: "https://psrlive2.listenon.in/ysr?ah=0e81749e37789e5fb8c290926ce87e3f" },
+ { name: "Aniruth", url_resolved: "https://psrlive2.listenon.in/anirud?ah=0e81749e37789e5fb8c290926ce87e3f" }
 
-            if (allStations.length > 0) {
-                changeStation(0);
-            }
-        })
-        .catch(err => {
-            console.error("Error fetching stations:", err);
-        });
+
+    ];
+
+    // Populate immediately
+    populateStationList(allStations);
+    if (allStations.length > 0) {
+        changeStation(0);
+    }
 
     function populateStationList(stationsToDisplay) {
         stationList.innerHTML = '';
@@ -189,21 +198,20 @@
         }
     }
 
-    // Interactive Button Mapping
+    // Button events
     btnPlayPause.addEventListener('click', togglePlay);
-
     btnNext.addEventListener('click', () => {
         let nextIndex = stationList.selectedIndex + 1;
         if (nextIndex >= stationList.options.length) nextIndex = 0;
         changeStation(nextIndex);
     });
-
     btnPrev.addEventListener('click', () => {
         let prevIndex = stationList.selectedIndex - 1;
         if (prevIndex < 0) prevIndex = stationList.options.length - 1;
         changeStation(prevIndex);
     });
 
+    // Search filter
     searchBar.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
         const filteredStations = allStations.filter(station => 
@@ -218,7 +226,6 @@
         playRadio();
     });
 </script>
-
 
 
             </ul>
