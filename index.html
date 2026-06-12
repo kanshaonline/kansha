@@ -7,7 +7,7 @@
     <!-- Importing Font Awesome for beautiful, crisp vector icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
- <style>
+<style>
         :root {
             --bg-dark: #070712;
             --card-bg: #111124;
@@ -399,29 +399,69 @@
             }
         }
 
-        /* Large Mobile Layout (Screens smaller than 768px) */
-        @media (max-width: 768px) {
-            header {
-                padding: 40px 20px;
-            }
-            header h1 {
-                font-size: 2rem;
-            }
-            header p.subtitle {
-                font-size: 1rem;
-                margin-bottom: 20px;
-            }
-            .container {
-                grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-                padding: 0 16px;
-                gap: 16px;
-            }
-            footer {
-                flex-direction: column;
-                text-align: center;
-                padding: 20px;
-            }
+        
+        #radioModal{
+            display:none;
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.8);
+            z-index:99999;
         }
+
+        #radioContainer{
+            position:absolute;
+            top:50%;
+            left:50%;
+            transform:translate(-50%,-50%);
+            width:90%;
+            max-width:650px;
+            height:80vh;
+            max-height:500px;
+            background:#111;
+            border-radius:12px;
+            overflow:hidden;
+        }
+
+        #closeRadio{
+            position:absolute;
+            top:10px;
+            right:10px;
+            width:32px;
+            height:32px;
+            border:none;
+            background:red;
+            color:white;
+            cursor:pointer;
+            z-index:999999;
+        }
+
+
+       /* Large Mobile Layout (Screens smaller than 768px) */
+            @media (max-width: 768px) {
+                header {
+                    padding: 40px 20px;
+                }
+                header h1 {
+                    font-size: 2rem;
+                }
+                header p.subtitle {
+                    font-size: 1rem;
+                    margin-bottom: 20px;
+                }
+               .container {
+                    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+                    padding: 0 16px;
+                    gap: 16px;
+                }
+                footer {
+                    flex-direction: column;
+                    text-align: center;
+                    padding: 20px;
+                }
+            }
 
         /* Small Mobile Layout (Screens smaller than 480px) */
         @media (max-width: 480px) {
@@ -461,8 +501,10 @@
                 color: var(--text-main);
             }
         }
+
+
     </style>
-	    <link rel="icon" type="image/x-icon" href="favicon.ico">
+          <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
 
@@ -497,7 +539,7 @@
             </ul>
         </div>
 
-        <!-- ENTERTAINMENT -->
+        <!-- Social Media -->
         <div class="category-card entertainment">
             <div class="card-header"><i class="fa-solid fa-share-square"></i>Social Media</div>
             <ul class="link-list">
@@ -535,7 +577,7 @@
                 <li><a href="https://www.sc.com/in/" target="_blank"><i class="fa-solid fa-chart-line link-icon"></i>Standard Chartered</a></li>
                 <li><a href="https://tngb.bank.in/" target="_blank"><i class="fa-regular fa-credit-card link-icon"></i>TNGB</a></li>
                 <li><a href="https://www.indianbank.net.in/jsp/startIBPreview.jsp" target="_blank"><i class="fa-solid fa-money-bill-transfer link-icon"></i>Indian Bank</a></li>
-                <li><a href="https://ebanking.indiapost.gov.in/" target="_blank"><i class="fa-solid fa-coins link-icon"></i>Post office</a></li>
+                <li><a href="https://ebanking.indiapost.gov.in/" target="_blank"><i class="fa-solid fa-coins link-icon"></i>Post Office</a></li>
             </ul>
         </div>
 
@@ -560,11 +602,8 @@
                 <li><a href="http://www.indianrail.gov.in/enquiry/PnrEnquiry.html" target="_blank"><i class="fa-solid fa-clipboard-question link-icon"></i>PNR Status</a></li>
             </ul>
         </div>
-
-
-       
-
-
+ 
+    
         <!-- ONLINE SHOPPING -->
         <div class="category-card shopping">
             <div class="card-header"><i class="fa-solid fa-cart-shopping"></i>Online Shopping</div>
@@ -609,17 +648,10 @@
                
             </ul>
         </div>
-<!-- SOCIAL MEDIA -->
+<!-- Entertainment -->
         <div class="category-card social-media">
             <div class="card-header"><i class="fa-solid fa-film"></i>Entertainment</div>
             <ul class="link-list">
-
-
-
- <li><a href="https://www.tamilradios.com/" target="_blank"><i class="fa-solid fa-music link-icon"></i>Tamil FM Radios</a></li>
-               
-
-
 
  <li><a href="https://www.skillsoft.com/login-skillsoft" target="_blank"><i class="fa-solid fa-book link-icon"></i>Skillsoft</a></li>
                <li><a href="https://www.moviesda.talk/" target="_blank"><i class="fa-solid fa-clapperboard link-icon"></i>Tamil Movies Download</a></li>
@@ -627,6 +659,11 @@
                                 <li><a href="https://en.savefrom.net/" target="_blank"><i class="fa-solid fa-download link-icon"></i>Save YT Videos Offline</a></li>
                               <li><a href="http://www.ticketnew.com/" target="_blank"><i class="fa-solid fa-ticket link-icon"></i>Ticket New</a></li>
                 <li><a href="https://in.bookmyshow.com/" target="_blank"><i class="fa-solid fa-clapperboard link-icon"></i>Book My Show</a></li>
+
+<li><a href="https://fmhy.net/beginners-guide" target="_blank"><i class="fa-solid fa-clapperboard link-icon"></i> Movies, Anime, Games, Softwares</a></li>
+
+                
+
  
             </ul>
         </div>
@@ -643,19 +680,16 @@
 
 
 <li><a href="https://chatgpt.com/" target="_blank"><i class="fa-solid fa-snowflake link-icon"></i>Chat GPT</a></li>
-
 <li><a href="https://claude.ai/new" target="_blank"><i class="fa-solid fa-asterisk link-icon"></i>Claude</a></li>
 
-				
+<li><a href="https://github.com/" target="_blank"><i class="fa-solid fa-snowflake link-icon"></i>GitHub</a></li>
 
-<li>
-    
+<li>  
     <a href="World Time Calculator.html" 
-       onclick="window.open(this.href, 'popupwindow', 'width=400,height=400,scrollbars=yes,menubar=no'); return false;">
+       onclick="window.open(this.href, 'popupwindow', 'width=400,height=400,statusbar=0,locationbar=0,toolbar=0'); return false;">
       <i class="fa-solid fa-globe link-icon"></i> World Time Calculator</a>
     </a>
 </li>
-
 
 
  <li>
@@ -673,7 +707,6 @@
             </ul>
         </div>
  
-
         <!-- No Results placeholder -->
         <div id="noResults" class="no-results">
             <i class="fa-solid fa-magnifying-glass-blur" style="font-size: 2.5rem; margin-bottom: 15px; display: block; color: var(--accent-red);"></i>
@@ -682,10 +715,12 @@
     </div>
 
     <footer>
-        <p><i class="fa-solid fa-comment-dots"></i>Your suggestions to improve this site are welcome.</p>
-        <p><i class="fa-solid fa-envelope"></i>Contact us at: <a href="mailto:kanshaonline@gmail.com">kanshaonline@gmail.com</a></p>
-    </footer>
 
+        <P><B>Disclaimer:</B></P><P> This website serves as a directory of publicly available and verified web links for informational purposes only. We do not host, own, or control any third-party content.   All trademarks, logos, and content belong to their respective owners. Accessing external websites is at the user's own risk, and we are not responsible for the content, accuracy, availability, or services provided by third-party websites.</P>
+
+        <p><i class="fa-solid fa-comment-dots"></i>Your suggestions to improve this site are welcome.</p>
+        <p><i class="fa-solid fa-envelope"></i><a href="mailto:kanshaonline@gmail.com">Contact us</a></p>
+    </footer>
     
 </body>
 </html>
