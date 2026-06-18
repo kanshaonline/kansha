@@ -1,3 +1,4 @@
+
 <html>
     
         <title>Kansha Radio - Tamil Stations</title>
@@ -20,7 +21,7 @@
         
         /* The simulated physical Radio Interface Container */
         .radio-chassis {
-            width: 200px;
+            width: 240px;
             color: #fff;
             text-align: center;
                         padding: 25px;
@@ -72,7 +73,7 @@
             border: 1px solid #0c0b0b;
             border-radius: 6px;
             color: white;
-            padding: 12px 5px;
+            padding: 7px 5px;
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 3px #111;
@@ -109,9 +110,9 @@
     </div>
 
     <div class="button-pad">
-        <button class="radio-btn" id="btnPrev">⏮</button>
-        <button class="radio-btn" id="btnPlayPause">▶</button>
-        <button class="radio-btn" id="btnNext">⏭</button>
+        <button class="radio-btn" id="btnPrev">⏮ Prev</button>
+        <button class="radio-btn" id="btnPlayPause">▶ Play</button>
+        <button class="radio-btn" id="btnNext">⏭ Next</button>
     </div>
 </div>
 
@@ -193,7 +194,7 @@
     function playRadio() {
         radioPlayer.play()
             .then(() => {
-                btnPlayPause.textContent = "⏸";
+                btnPlayPause.textContent = "⏸Pause";
                 btnPlayPause.classList.add('playing');
             })
             .catch(err => console.error("Playback interrupted:", err));
